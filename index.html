@@ -120,8 +120,6 @@
                     json = data;
                 }
             });
-            console.log(json);
-
             return json;
         })();
 
@@ -131,37 +129,37 @@
                 labels: data['EUA'].days_since_first_infection,
                 datasets: [{
                     label: 'Brasil',
-                    backgroundColor: window.chartColors.red,
+                    backgroundColor: Samples.utils.transparentize(window.chartColors.red),
                     borderColor: window.chartColors.red,
                     fill: false,
                     data: data['Brasil'].confirmed,
                 }, {
                     label: 'Alemanha',
-                    backgroundColor: window.chartColors.blue,
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.blue),
                     borderColor: window.chartColors.blue,
                     fill: false,
                     data: data['Alemanha'].confirmed,
                 }, {
                     label: 'França',
-                    backgroundColor: window.chartColors.green,
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.green),
                     borderColor: window.chartColors.green,
                     fill: false,
                     data: data['França'].confirmed,
                 }, {
                     label: 'Portugal',
-                    backgroundColor: window.chartColors.yellow,
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.yellow),
                     borderColor: window.chartColors.yellow,
                     fill: false,
                     data: data['Portugal'].confirmed,
                 }, {
                     label: 'Itália',
-                    backgroundColor: window.chartColors.purple,
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.purple),
                     borderColor: window.chartColors.purple,
                     fill: false,
                     data: data['Itália'].confirmed,
                 }, {
                     label: 'Espanha',
-                    backgroundColor: window.chartColors.orange,
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.orange),
                     borderColor: window.chartColors.orange,
                     fill: false,
                     data: data['Espanha'].confirmed,
@@ -213,20 +211,20 @@
                     labels: data[country]['date'],
                     datasets: [{
                         label: 'Confirmados',
-                        backgroundColor: window.chartColors.blue,
-                        borderColor: window.chartColors.blue,
+                        backgroundColor: Samples.utils.transparentize(window.chartColors.blue),
+                        //borderColor: window.chartColors.blue,
                         data: data[country]['confirmed'],
-                        fill: false,
+                        fill: true,
                     }, {
                         label: 'Recuperados',
-                        fill: false,
-                        backgroundColor: window.chartColors.green,
-                        borderColor: window.chartColors.green,
+                        fill: true,
+                        backgroundColor: Samples.utils.transparentize(window.chartColors.green),
+                        //borderColor: window.chartColors.green,
                         data: data[country]['recovered'],
                     }, {
                         label: 'Mortes',
-                        fill: false,
-                        backgroundColor: window.chartColors.red,
+                        fill: true,
+                        backgroundColor: Samples.utils.transparentize(window.chartColors.red),
                         borderColor: window.chartColors.red,
                         data: data[country]['deaths'],
                     }]
@@ -260,9 +258,9 @@
                             },
                             ticks: {
                                 min: 0,
-                                //stepSize: 10
+                                //stepSize: 10x
                             }
-                        }]
+                        }],
                     }
                 }
             };
@@ -298,6 +296,16 @@
             container.appendChild(row)
         };
 
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-161526158-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-161526158-1');
     </script>
 
 
