@@ -198,7 +198,8 @@ if __name__ == "__main__":
     df = load_files(url=url, filenames=filenames)
     countries = ['Brazil', 'Italy', 'Germany',
                  'France', 'Spain', 'US', 'Portugal']
-    data = df.query("country in @countries").query('confirmed > 0')
+    #data = df.query("country in @countries").query('confirmed > 0')
+    data = df.query('confirmed > 0')
     data['days_since_first_infection'] = data.groupby(
         "country").confirmed.rank(method='first', ascending=True)
 

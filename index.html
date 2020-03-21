@@ -16,19 +16,95 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 
-
     <style>
         canvas {
             -moz-user-select: none;
             -webkit-user-select: none;
             -ms-user-select: none;
         }
+
+        .chart-container {
+            width: 500px;
+            margin-left: 40px;
+            margin-right: 40px;
+            margin-bottom: 40px;
+        }
+
+        .chart-container-main {
+            width: 900px;
+            margin-left: 40px;
+            margin-right: 40px;
+            margin-bottom: 40px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
     </style>
+
+    <style type="text/css">
+        /* Chart.js */
+        @keyframes chartjs-render-animation {
+            from {
+                opacity: .99
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        .chartjs-render-monitor {
+            animation: chartjs-render-animation 1ms
+        }
+
+        .chartjs-size-monitor,
+        .chartjs-size-monitor-expand,
+        .chartjs-size-monitor-shrink {
+            position: absolute;
+            direction: ltr;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            pointer-events: none;
+            visibility: hidden;
+            z-index: -1
+        }
+
+        .chartjs-size-monitor-expand>div {
+            position: absolute;
+            width: 1000000px;
+            height: 1000000px;
+            left: 0;
+            top: 0
+        }
+
+        .chartjs-size-monitor-shrink>div {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            left: 0;
+            top: 0
+        }
+    </style>
+
 </head>
 
 <body>
-    <div style="width:75%;">
-        <canvas id="canvas"></canvas>
+
+    <div class="container">
+        <h1>Número de casos</h1>
+        <div class='row'>
+            <div class='col chart-container-main '>
+                <canvas id="canvas-days-since-fisrt-infection"></canvas>
+            </div>
+        </div>
+        <h2>Número de casos por país</h2>
     </div>
 
     <script>
@@ -44,6 +120,8 @@
                     json = data;
                 }
             });
+            console.log(json);
+
             return json;
         })();
 
@@ -125,13 +203,105 @@
             }
         };
 
+
+
+
+        function createConfig(country) {
+            return {
+                type: 'line',
+                data: {
+                    labels: data[country]['date'],
+                    datasets: [{
+                        label: 'Confirmados',
+                        backgroundColor: window.chartColors.blue,
+                        borderColor: window.chartColors.blue,
+                        data: data[country]['confirmed'],
+                        fill: false,
+                    }, {
+                        label: 'Recuperados',
+                        fill: false,
+                        backgroundColor: window.chartColors.green,
+                        borderColor: window.chartColors.green,
+                        data: data[country]['recovered'],
+                    }, {
+                        label: 'Mortes',
+                        fill: false,
+                        backgroundColor: window.chartColors.red,
+                        borderColor: window.chartColors.red,
+                        data: data[country]['deaths'],
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: country
+                    },
+                    scales: {
+                        xAxes: [{
+                            gridLines: {
+                                display: true,
+                                drawBorder: true,
+                                drawOnChartArea: true,
+                                drawTicks: false,
+                            }
+                        }],
+                        yAxes: [{
+                            gridLines: {
+                                display: true,
+                                drawBorder: true,
+                                drawOnChartArea: true,
+                                drawTicks: false,
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Número oficial de casos',
+                                fontSize: 14,
+                            },
+                            ticks: {
+                                min: 0,
+                                //stepSize: 10
+                            }
+                        }]
+                    }
+                }
+            };
+        }
+
         window.onload = function () {
-            var ctx = document.getElementById('canvas').getContext('2d');
+            var ctx = document.getElementById('canvas-days-since-fisrt-infection').getContext('2d');
             window.myLine = new Chart(ctx, config);
+            var container = document.querySelector('.container');
+            var row = document.createElement('div');
+            row.classList.add('row');
+            var c = 1;
+
+            ['Brasil', 'Itália', 'Espanha', 'Alemanha', 'França', 'Portugal'
+            ].forEach(function (country) {
+                col = document.createElement('div')
+                col.classList.add('col');
+                col.classList.add('chart-container');
+                var canvas = document.createElement('canvas');
+                col.appendChild(canvas);
+                row.appendChild(col)
+                var ctx = canvas.getContext('2d');
+                var config = createConfig(country);
+                new Chart(ctx, config);
+
+                if (c % 2 == 0) {
+                    container.appendChild(row)
+                    row = document.createElement('div');
+                    row.classList.add('row');
+                }
+                c += 1
+            });
+            container.appendChild(row)
         };
 
-
     </script>
+
+
+
 </body>
 
 </html>
