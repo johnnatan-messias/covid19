@@ -1,0 +1,137 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Dados sobre o Covid-19 no Brasil</title>
+    <meta charset="utf-8">
+    <script src="./utils/js/chart.js/Chart.min.js"></script>
+    <script src="./utils/js/chart.js/utils.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+
+
+    <style>
+        canvas {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="width:75%;">
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <script>
+
+        var data = (function () {
+            var json = null;
+            $.ajax({
+                'async': false,
+                'global': false,
+                'url': "data/data.json",
+                'dataType': "json",
+                'success': function (data) {
+                    json = data;
+                }
+            });
+            return json;
+        })();
+
+        var config = {
+            type: 'line',
+            data: {
+                labels: data['EUA'].days_since_first_infection,
+                datasets: [{
+                    label: 'Brasil',
+                    backgroundColor: window.chartColors.red,
+                    borderColor: window.chartColors.red,
+                    fill: false,
+                    data: data['Brasil'].confirmed,
+                }, {
+                    label: 'Alemanha',
+                    backgroundColor: window.chartColors.blue,
+                    borderColor: window.chartColors.blue,
+                    fill: false,
+                    data: data['Alemanha'].confirmed,
+                }, {
+                    label: 'França',
+                    backgroundColor: window.chartColors.green,
+                    borderColor: window.chartColors.green,
+                    fill: false,
+                    data: data['França'].confirmed,
+                }, {
+                    label: 'Portugal',
+                    backgroundColor: window.chartColors.yellow,
+                    borderColor: window.chartColors.yellow,
+                    fill: false,
+                    data: data['Portugal'].confirmed,
+                }, {
+                    label: 'Itália',
+                    backgroundColor: window.chartColors.purple,
+                    borderColor: window.chartColors.purple,
+                    fill: false,
+                    data: data['Itália'].confirmed,
+                }, {
+                    label: 'Espanha',
+                    backgroundColor: window.chartColors.orange,
+                    borderColor: window.chartColors.orange,
+                    fill: false,
+                    data: data['Espanha'].confirmed,
+                }]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Distribuição do número de casos a partir do primeiro caso reportado'
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número de dias desde o primeiro caso reportado',
+                            fontSize: 18,
+                        },
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número oficial de casos (log)',
+                            fontSize: 18,
+                        },
+
+                        type: 'logarithmic',
+
+                        ticks: {
+                            max: 100000,
+                            userCallback: function (tick) {
+                                return tick.toLocaleString()
+                            },
+                        },
+                    }]
+                }
+            }
+        };
+
+        window.onload = function () {
+            var ctx = document.getElementById('canvas').getContext('2d');
+            window.myLine = new Chart(ctx, config);
+        };
+
+
+    </script>
+</body>
+
+</html>
