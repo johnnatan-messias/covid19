@@ -197,7 +197,6 @@
                         type: 'logarithmic',
 
                         ticks: {
-                            max: 100000,
                             userCallback: function (tick) {
                                 return tick.toLocaleString()
                             },
@@ -280,8 +279,8 @@
             row.classList.add('row');
             var c = 1;
 
-            ['Brasil', 'China', 'EUA', 'Itália', 
-            'Espanha', 'Alemanha', 'França', 'Portugal'
+            ['Brasil', 'China', 'EUA', 'Itália',
+                'Espanha', 'Alemanha', 'França', 'Portugal'
             ].forEach(function (country) {
                 col = document.createElement('div')
                 col.classList.add('col');
@@ -318,5 +317,20 @@
 
 
 </body>
+
+<!-- Footer -->
+<footer>
+    <div class="row text-center inline">
+        <div class="col-sm">
+            Atualizado em 21 de março de 2020
+        </div>
+        <div class="w-100"></div>
+        <div class="col-sm">
+            <a href="https://github.com/johnnatan-messias/covid19/">GitHub</a>
+        </div>
+    </div>
+
+</footer>
+<!-- Footer -->
 
 </html>
