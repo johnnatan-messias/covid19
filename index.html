@@ -102,10 +102,21 @@
     <div class="container">
         <h1>Número de casos</h1>
         <div class='row'>
-            <div class='col chart-container-main '>
+            <div class='col chart-container-main'>
                 <canvas id="canvas-days-since-fisrt-infection"></canvas>
             </div>
         </div>
+
+
+        <div class="row text-center inline">
+            <div class="col-12">
+                <h2>Proporção de casos por país</h2>
+            </div>
+            <div class="col-12" id="bar-plot">
+
+            </div>
+        </div>
+
 
         <div class="row text-center inline">
             <div class="col-12">
@@ -115,8 +126,6 @@
                 <h6>O eixo y possui escala diferente em cada gráfico</h6>
             </div>
         </div>
-
-
 
 
     </div>
@@ -140,49 +149,49 @@
         var config = {
             type: 'line',
             data: {
-                labels: data['EUA'].days_since_first_infection,
+                labels: data.timeserie['EUA'].days_since_first_infection,
                 datasets: [{
                     label: 'Brasil',
                     backgroundColor: Samples.utils.transparentize(window.chartColors.red),
                     borderColor: window.chartColors.red,
                     fill: false,
-                    data: data['Brasil'].confirmed,
+                    data: data.timeserie['Brasil'].confirmed,
                 }, {
                     label: 'Alemanha',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.blue),
                     borderColor: window.chartColors.blue,
                     fill: false,
-                    data: data['Alemanha'].confirmed,
+                    data: data.timeserie['Alemanha'].confirmed,
                 }, {
                     label: 'EUA',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.steel_blue),
                     borderColor: window.chartColors.steel_blue,
                     fill: false,
-                    data: data['EUA'].confirmed,
+                    data: data.timeserie['EUA'].confirmed,
                 }, {
                     label: 'França',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.green),
                     borderColor: window.chartColors.green,
                     fill: false,
-                    data: data['França'].confirmed,
+                    data: data.timeserie['França'].confirmed,
                 }, {
                     label: 'Portugal',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.yellow),
                     borderColor: window.chartColors.yellow,
                     fill: false,
-                    data: data['Portugal'].confirmed,
+                    data: data.timeserie['Portugal'].confirmed,
                 }, {
                     label: 'Itália',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.purple),
                     borderColor: window.chartColors.purple,
                     fill: false,
-                    data: data['Itália'].confirmed,
+                    data: data.timeserie['Itália'].confirmed,
                 }, {
                     label: 'Espanha',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.orange),
                     borderColor: window.chartColors.orange,
                     fill: false,
-                    data: data['Espanha'].confirmed,
+                    data: data.timeserie['Espanha'].confirmed,
                 }]
             },
             options: {
@@ -229,25 +238,25 @@
             return {
                 type: 'line',
                 data: {
-                    labels: data[country]['date'],
+                    labels: data.timeserie[country]['date'],
                     datasets: [{
                         label: 'Confirmados',
                         backgroundColor: window.chartColors.blue,
                         borderColor: window.chartColors.blue,
-                        data: data[country]['confirmed'],
+                        data: data.timeserie[country]['confirmed'],
                         fill: false,
                     }, {
                         label: 'Recuperados',
                         fill: false,
                         backgroundColor: window.chartColors.green,
                         borderColor: window.chartColors.green,
-                        data: data[country]['recovered'],
+                        data: data.timeserie[country]['recovered'],
                     }, {
                         label: 'Mortes',
                         fill: false,
                         backgroundColor: window.chartColors.red,
                         borderColor: window.chartColors.red,
-                        data: data[country]['deaths'],
+                        data: data.timeserie[country]['deaths'],
                     }]
                 },
                 options: {
@@ -287,9 +296,76 @@
             };
         }
 
+        var barChartData = {
+            labels: data.fraction['Países'],
+            datasets: [{
+                label: 'Ativos',
+                backgroundColor: window.chartColors.blue,
+                stack: 'Stack 0',
+                data: data.fraction.actives_frac
+            }, {
+                label: 'Recuperados',
+                backgroundColor: window.chartColors.green,
+                stack: 'Stack 0',
+                data: data.fraction.recovered_frac
+            }, {
+                label: 'Mortes',
+                backgroundColor: window.chartColors.red,
+                stack: 'Stack 0',
+                data: data.fraction.deaths_frac
+            }]
+
+        };
+
+        var conf_bar = {
+            type: 'line',
+            data: barChartData,
+            options: {
+                title: {
+                    display: true,
+                    text: 'Proporção de casos dos 30 países mais afetados'
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false
+                },
+                responsive: true,
+                scales: {
+                    xAxes: [{
+                        stacked: true,
+                        ticks: {
+                            min: 0,
+                            max: 100
+                        }
+                    }],
+                    yAxes: [{
+                        stacked: true,
+                        ticks: {
+                            min: 0,
+                            max: 100
+                        }
+                    }]
+                }
+            }
+        }
+
+
         window.onload = function () {
             var ctx = document.getElementById('canvas-days-since-fisrt-infection').getContext('2d');
             window.myLine = new Chart(ctx, config);
+
+            var canvas = document.createElement('canvas');
+            var row = document.getElementById('bar-plot');
+            row.classList.add('row');
+            col = document.createElement('div')
+            col.classList.add('col');
+            col.classList.add('chart-container-main');
+            col.appendChild(canvas);
+            row.appendChild(col)
+
+            var ctx = canvas.getContext('2d');
+            window.myBar = new Chart(ctx, conf_bar);
+
             var container = document.querySelector('.container');
             var row = document.createElement('div');
             row.classList.add('row');

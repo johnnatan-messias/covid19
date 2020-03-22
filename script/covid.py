@@ -70,6 +70,14 @@ plt.rcParams['xtick.labelsize'] = 18
 plt.rcParams['ytick.labelsize'] = 18
 
 pd.set_option('precision', 8)
+countries_to_pt = {'Brazil': 'Brasil', 'France': 'França', 'Germany': 'Alemanha',
+                   'Italy': 'Itália', 'Spain': 'Espanha', 'US': 'EUA', 'Switzerland': 'Suíça',
+                   'Netherlands': 'Holanda', 'Iran': 'Irã', 'Korea, South': 'Coréia do Sul',
+                   'United Kingdom': 'Reino Unido', 'Belgium': 'Bélgica', 'Austria': 'Áustria',
+                   'Norway': 'Noruega', 'Sweden': 'Suécia', 'Denmark': 'Dinamarca', 'Canada': 'Canadá',
+                   'Malaysia': 'Malásia', 'Australia': 'Austrália', 'Japan': 'Japão', 'Ireland': 'Irland',
+                   'Turkey': 'Turquia', 'Luxembourg': 'Luxemburgo', 'Pakistan': 'Paquistão', 'Czechia': 'Rep. Tcheca',
+                   'Cruise Ship': 'Cruzeiro D. Princess'}
 
 
 def plot_area(data, ax=None):
@@ -178,13 +186,26 @@ def plot_confirmed_cases(data):
 
 
 def persist_dataset(df):
-    data.index.name = 'date'
-    data.index = data.index.strftime('%d %b')
-    cols = ['confirmed', 'recovered', 'deaths', 'actives','days_since_first_infection']
-    out = dict()
-    for country in data['Países'].unique():
-        out[country] = data.query('Países == @country')[cols].reset_index().to_dict(orient='list')
+    date_max = df.index.max()
+    prop = df.loc[date_max].sort_values(by='confirmed', ascending=False).head(30)
+    df.index.name = 'date'
+    df.index = df.index.strftime('%d %b')
+    cols = ['confirmed', 'recovered', 'deaths',
+            'actives', 'days_since_first_infection']
+    out = dict(timeserie=dict(), fraction=dict())
+    for country in df['Países'].unique():
+        out['timeserie'][country] = df.query('Países == @country')[
+            cols].reset_index().to_dict(orient='list')
 
+    # build proportion of cases per country
+
+    prop['actives_frac'] = (100 * prop['actives'] / prop['confirmed']).round(2)
+    prop['recovered_frac'] = (100 * prop['recovered'] / prop['confirmed']).round(2)
+    prop['deaths_frac'] = (100 * prop['deaths'] / prop['confirmed']).round(2)
+    prop = prop[['Países', 'actives_frac', 'recovered_frac', 'deaths_frac']]
+
+    out['fraction'] = prop.to_dict(orient='list') 
+    
     with open('../data/data.json', 'w', encoding='utf8') as outfile:
         json.dump(out, outfile, ensure_ascii=False)
 
@@ -202,12 +223,7 @@ if __name__ == "__main__":
     data = df.query('confirmed > 0')
     data['days_since_first_infection'] = data.groupby(
         "country").confirmed.rank(method='first', ascending=True)
-
-    data['Países'] = data['country'].replace(
-        {'Brazil': 'Brasil', 'France': 'França', 'Germany': 'Alemanha',
-         'Italy': 'Itália', 'Spain': 'Espanha', 'US': 'EUA'}
-    )
+    data['Países'] = data['country'].replace(countries_to_pt)
     # plot_confirmed_cases(data)
 
     persist_dataset(df=data)
-

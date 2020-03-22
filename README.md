@@ -7,6 +7,11 @@ Webpage: [https://johnnatan-messias.github.io/covid19/](https://johnnatan-messia
 
 - Initial commit
 
+## TODO
+----------
+
+* Implement a real-time crawler   
+
 ## Ask a Question
 ----------
 
