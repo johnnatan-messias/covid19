@@ -230,20 +230,20 @@
                     labels: data[country]['date'],
                     datasets: [{
                         label: 'Confirmados',
-                        backgroundColor: Samples.utils.transparentize(window.chartColors.blue),
-                        //borderColor: window.chartColors.blue,
+                        backgroundColor: window.chartColors.blue,
+                        borderColor: window.chartColors.blue,
                         data: data[country]['confirmed'],
-                        fill: true,
+                        fill: false,
                     }, {
                         label: 'Recuperados',
-                        fill: true,
-                        backgroundColor: Samples.utils.transparentize(window.chartColors.green),
-                        //borderColor: window.chartColors.green,
+                        fill: false,
+                        backgroundColor: window.chartColors.green,
+                        borderColor: window.chartColors.green,
                         data: data[country]['recovered'],
                     }, {
                         label: 'Mortes',
-                        fill: true,
-                        backgroundColor: Samples.utils.transparentize(window.chartColors.red),
+                        fill: false,
+                        backgroundColor: window.chartColors.red,
                         borderColor: window.chartColors.red,
                         data: data[country]['deaths'],
                     }]
