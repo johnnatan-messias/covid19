@@ -104,7 +104,19 @@
                 <canvas id="canvas-days-since-fisrt-infection"></canvas>
             </div>
         </div>
-        <h2>Número de casos por país</h2>
+
+        <div class="row text-center inline">
+            <div class="col-12">
+                <h2>Número de casos por país</h2>
+            </div>
+            <div class="col-12">
+                <h6>O eixo y possui escala diferente em cada gráfico</h6>
+            </div>
+        </div>
+
+
+
+
     </div>
 
     <script>
@@ -199,7 +211,9 @@
                         ticks: {
                             userCallback: function (tick) {
                                 return tick.toLocaleString()
-                            },
+                            }, 
+                            maxTicksLimit: 15,
+                            //sampleSize: 15,
                         },
                     }]
                 }
