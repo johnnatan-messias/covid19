@@ -250,8 +250,12 @@ def persist_dataset(data):
         json.dump(data, outfile, ensure_ascii=False)
 
 
-def send_file_to_server():
-    os.system("rsync -rvzP ../data/data.json mpi-contact:~/public_html/covid19/")
+def push_file():
+    os.system("git add ../data -u")
+    os.system("git commit -m 'Update'")
+    os.system("git push")
+
+    # os.system("rsync -rvzP ../data/data.json mpi-contact:~/public_html/covid19/")
 
 
 def run():
@@ -265,7 +269,7 @@ def run():
 
     data_json = process_dataframe(df=df)
     persist_dataset(data=data_json)
-    #send_file_to_server()
+    push_file()
 
 
 if __name__ == "__main__":
