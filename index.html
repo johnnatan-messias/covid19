@@ -104,7 +104,7 @@
 <body>
 
     <div class="container">
-        
+
         <div class="row text-center inline">
             <div class="col-12">
                 <h1>Número de casos</h1>
@@ -112,8 +112,36 @@
             <div class="col-12">
                 <h6>Atualizado em <span id="update-datetime"></span></h6>
             </div>
+            <div class="col-3">
+                <h4>Mundo</h4>
+                <h3><span id="confirmed-world"></span></h3>
+                <h6>Ativos: <span id="active-world"></span></h6>
+                <h6>Recuperados: <span id="recovered-world"></span></h6>
+                <h6>Mortes: <span id="deaths-world"></span></h6>
+            </div>
+            <div class="col-3">
+                <h4>Brasil</h4>
+                <h3><span id="confirmed-brazil"></span></h3>
+                <h6>Ativos: <span id="active-brazil"></span></h6>
+                <h6>Recuperados: <span id="recovered-brazil"></span></h6>
+                <h6>Mortes: <span id="deaths-brazil"></span></h6>
+            </div>
+            <div class="col-3">
+                <h4>Itália</h4>
+                <h3><span id="confirmed-italy"></span></h3>
+                <h6>Ativos: <span id="active-italy"></span></h6>
+                <h6>Recuperados: <span id="recovered-italy"></span></h6>
+                <h6>Mortes: <span id="deaths-italy"></span></h6>
+            </div>
+            <div class="col-3">
+                <h4>Alemanha</h4>
+                <h3><span id="confirmed-germany"></span></h3>
+                <h6>Ativos: <span id="active-germany"></span></h6>
+                <h6>Recuperados: <span id="recovered-germany"></span></h6>
+                <h6>Mortes: <span id="deaths-germany"></span></h6>
+            </div>
         </div>
-        
+
         <div class='row'>
             <div class='col chart-container-main'>
                 <canvas id="canvas-days-since-fisrt-infection"></canvas>
@@ -153,9 +181,30 @@
             });
             return json;
         })();
+
         var date = Date.parse(data.last_update);
         date = new Date(date).toLocaleString()
         document.getElementById("update-datetime").textContent = date
+
+        document.getElementById("confirmed-world").textContent = data.total['confirmed'].toLocaleString()
+        document.getElementById("active-world").textContent = data.total['active'].toLocaleString()
+        document.getElementById("recovered-world").textContent = data.total['recovered'].toLocaleString()
+        document.getElementById("deaths-world").textContent = data.total['deaths'].toLocaleString()
+
+        document.getElementById("confirmed-brazil").textContent = data.stats['Brasil']['confirmed'].toLocaleString()
+        document.getElementById("active-brazil").textContent = data.stats['Brasil']['active'].toLocaleString()
+        document.getElementById("recovered-brazil").textContent = data.stats['Brasil']['recovered'].toLocaleString()
+        document.getElementById("deaths-brazil").textContent = data.stats['Brasil']['deaths'].toLocaleString()
+
+        document.getElementById("confirmed-italy").textContent = data.stats['Itália']['confirmed'].toLocaleString()
+        document.getElementById("active-italy").textContent = data.stats['Itália']['active'].toLocaleString()
+        document.getElementById("recovered-italy").textContent = data.stats['Itália']['recovered'].toLocaleString()
+        document.getElementById("deaths-italy").textContent = data.stats['Itália']['deaths'].toLocaleString()
+
+        document.getElementById("confirmed-germany").textContent = data.stats['Alemanha']['confirmed'].toLocaleString()
+        document.getElementById("active-germany").textContent = data.stats['Alemanha']['active'].toLocaleString()
+        document.getElementById("recovered-germany").textContent = data.stats['Alemanha']['recovered'].toLocaleString()
+        document.getElementById("deaths-germany").textContent = data.stats['Alemanha']['deaths'].toLocaleString()
 
         var config = {
             type: 'line',

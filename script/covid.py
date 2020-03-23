@@ -215,7 +215,8 @@ def process_dataframe(df):
     cols = ['confirmed', 'recovered', 'deaths',
             'active', 'days_since_first_infection']
     out = dict(timeserie=dict(), fraction=dict(),
-               last_update=date_update.strftime('%Y-%m-%dT%X'))
+               last_update=date_update.strftime('%Y-%m-%dT%X'), stats=dict(),
+               total=dict())
     countries = list(prop['countries'].unique())
 
     countries.remove('Brasil')
@@ -231,7 +232,16 @@ def process_dataframe(df):
     prop['deaths_frac'] = (100 * prop['deaths'] / prop['confirmed']).round(2)
     prop = prop[['countries', 'active_frac', 'recovered_frac', 'deaths_frac']]
 
+    total_df = df.loc[date_max].sort_values(
+        by='confirmed', ascending=False)
+    out['total'] = total_df[['confirmed', 'active',
+                             'recovered', 'deaths']].sum().to_dict()
+    out['stats'] = total_df[['countries', 'confirmed',
+                             'active', 'recovered', 'deaths']
+                            ].set_index('countries').to_dict(orient='index')
+
     out['fraction'] = prop.to_dict(orient='list')
+
     return out
 
 
