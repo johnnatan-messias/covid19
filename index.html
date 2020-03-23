@@ -382,7 +382,8 @@
             var row = document.createElement('div');
             row.classList.add('row');
             var c = 1;
-            countries = data.fraction['countries']
+            
+            countries = data.fraction['countries'].slice(0)
             countries.splice(countries.indexOf('Brasil'), 1)
             countries.unshift('Brasil')
             countries.forEach(function (country) {
@@ -429,7 +430,7 @@
         </div>
         <div class="w-100"></div>
         <div class="col-sm">
-            <a href="https://github.com/johnnatan-messias/covid19/">GitHub</a>
+            <a href="http://johnnatan.me">http://johnnatan.me</a>
         </div>
     </div>
 
