@@ -193,7 +193,10 @@ def persist_dataset(df):
     cols = ['confirmed', 'recovered', 'deaths',
             'actives', 'days_since_first_infection']
     out = dict(timeserie=dict(), fraction=dict())
-    for country in df['countries'].unique():
+    countries = list(prop['countries'].unique())
+    countries.remove('Brasil')
+    countries.insert(0, 'Brasil')
+    for country in countries:
         out['timeserie'][country] = df.query('countries == @country')[
             cols].reset_index().to_dict(orient='list')
 
