@@ -29,7 +29,7 @@
             -ms-user-select: none;
         }
 
-        .chart-container {
+        .chart-container-bar {
             width: 500px;
             margin-left: 40px;
             margin-right: 40px;
@@ -278,7 +278,7 @@
                                 display: true,
                                 drawBorder: true,
                                 drawOnChartArea: true,
-                                drawTicks: false,
+                                drawTicks: true,
                             }
                         }],
                         yAxes: [{
@@ -286,7 +286,7 @@
                                 display: true,
                                 drawBorder: true,
                                 drawOnChartArea: true,
-                                drawTicks: false,
+                                drawTicks: true,
                             },
                             scaleLabel: {
                                 display: true,
@@ -371,7 +371,7 @@
             row.classList.add('row');
             col = document.createElement('div')
             col.classList.add('col');
-            col.classList.add('chart-container-main');
+            col.classList.add('chart-container-bar');
             col.appendChild(canvas);
             row.appendChild(col)
 
