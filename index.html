@@ -104,23 +104,29 @@
 <body>
 
     <div class="container">
-        <h1>Número de casos</h1>
+        
+        <div class="row text-center inline">
+            <div class="col-12">
+                <h1>Número de casos</h1>
+            </div>
+            <div class="col-12">
+                <h6>Atualizado em <span id="update-datetime"></span></h6>
+            </div>
+        </div>
+        
         <div class='row'>
             <div class='col chart-container-main'>
                 <canvas id="canvas-days-since-fisrt-infection"></canvas>
             </div>
         </div>
 
-
         <div class="row text-center inline">
             <div class="col-12">
                 <h2>Proporção de casos por país</h2>
             </div>
             <div class="col-12" id="bar-plot">
-
             </div>
         </div>
-
 
         <div class="row text-center inline">
             <div class="col-12">
@@ -130,8 +136,6 @@
                 <h6>O eixo y possui escala diferente em cada gráfico</h6>
             </div>
         </div>
-
-
     </div>
 
     <script>
@@ -141,7 +145,7 @@
             $.ajax({
                 'async': false,
                 'global': false,
-                'url': "data/data.json",
+                'url': "https://people.mpi-sws.org/~johnme/covid19/data.json",
                 'dataType': "json",
                 'success': function (data) {
                     json = data;
@@ -149,6 +153,9 @@
             });
             return json;
         })();
+        var date = Date.parse(data.last_update);
+        date = new Date(date).toLocaleString()
+        document.getElementById("update-datetime").textContent = date
 
         var config = {
             type: 'line',
@@ -309,7 +316,7 @@
                 label: 'Ativos',
                 backgroundColor: window.chartColors.blue,
                 stack: 'Stack 0',
-                data: data.fraction.actives_frac
+                data: data.fraction.active_frac
             }, {
                 label: 'Recuperados',
                 backgroundColor: window.chartColors.green,
@@ -382,7 +389,7 @@
             var row = document.createElement('div');
             row.classList.add('row');
             var c = 1;
-            
+
             countries = data.fraction['countries'].slice(0)
             countries.splice(countries.indexOf('Brasil'), 1)
             countries.unshift('Brasil')
@@ -425,9 +432,6 @@
 <!-- Footer -->
 <footer>
     <div class="row text-center inline">
-        <div class="col-sm">
-            Atualizado diariamente!
-        </div>
         <div class="w-100"></div>
         <div class="col-sm">
             <a href="http://johnnatan.me">http://johnnatan.me</a>

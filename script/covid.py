@@ -1,6 +1,8 @@
 import json
 import locale
 import os
+import time
+import traceback
 from datetime import datetime
 
 import matplotlib.dates as mdates
@@ -12,7 +14,7 @@ import pandas as pd
 import seaborn as sns
 from scipy import stats
 
-locale.setlocale(locale.LC_ALL, 'pt_pt.UTF-8')
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 
 font_dirs = ['/home/johnme/blockchain-notebook/fonts/']
@@ -23,7 +25,11 @@ font_manager.fontManager.ttflist.extend(font_list)
 colors = {'blue': '#30a2da', 'red': '#fc4f30',
           'yellow': '#e5ae38', 'green': '#6d904f', 'gray': '#8b8b8b'}
 
-
+url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/'
+url_daily = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_country.csv"
+filenames = {'confirmed': 'time_series_19-covid-Confirmed.csv',
+             'deaths': 'time_series_19-covid-Deaths.csv',
+             'recovered': 'time_series_19-covid-Recovered.csv'}
 font = 'Clear Sans'
 
 plt.rcParams["figure.figsize"] = [8.5, 4.5]
@@ -77,9 +83,9 @@ countries_to_pt = {'Brazil': 'Brasil', 'France': 'França', 'Germany': 'Alemanha
                    'Norway': 'Noruega', 'Sweden': 'Suécia', 'Denmark': 'Dinamarca', 'Canada': 'Canadá',
                    'Malaysia': 'Malásia', 'Australia': 'Austrália', 'Japan': 'Japão', 'Ireland': 'Irland',
                    'Turkey': 'Turquia', 'Luxembourg': 'Luxemburgo', 'Pakistan': 'Paquistão', 'Czechia': 'Rep. Tcheca',
-                   'Cruise Ship': 'Cruzeiro D. Princess'}
+                   'Cruise Ship': 'Cruzeiro D. Princess', 'Ecuador': 'Equador'}
 
-url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuDj0R6K85sdtI8I-Tc7RCx8CnIxKUQue0TCUdrFOKDw9G3JRtGhl64laDd3apApEvIJTdPFJ9fEUL/pub?gid=0&output=csv&sheet=CR_ROYLAB'
+
 def plot_area(data, ax=None):
     if not ax:
         _, ax = plt.subplots(nrows=1)
@@ -145,7 +151,7 @@ def get_data(df_confirmed, df_recovered, df_deaths):
         dfs.append(df)
     df = pd.concat(dfs)
     df.index = pd.to_datetime(df.index)
-    df['actives'] = df['confirmed'] - df['recovered'] - df['deaths']
+
     return df
 
 
@@ -154,7 +160,13 @@ def load_files(url, filenames):
     df_deaths = pd.read_csv(url+filenames['deaths'], sep=',')
     df_recovered = pd.read_csv(url+filenames['recovered'], sep=',')
     df = get_data(df_confirmed, df_recovered, df_deaths)
-    return df
+
+    df.rename(columns={'country': 'countries'}, inplace=True)
+    #df['countries'] = df['countries'].replace(countries_to_pt)
+    #df.index = df.index.strftime('%d %b')
+    df.index.name = 'date'
+    df.index = pd.to_datetime(df.index)
+    return df.reset_index()
 
 
 def plot_confirmed_cases(data):
@@ -185,15 +197,27 @@ def plot_confirmed_cases(data):
     plt.savefig('./confirmed_cases.pdf', bbox_inches='tight')
 
 
-def persist_dataset(df):
-    date_max = df.index.max()
-    prop = df.loc[date_max].sort_values(by='confirmed', ascending=False).head(30)
-    df.index.name = 'date'
-    df.index = df.index.strftime('%d %b')
+def process_dataframe(df):
+    df['countries'] = df['countries'].replace(countries_to_pt)
+    df['days_since_first_infection'] = df.groupby(
+        "countries").confirmed.rank(method='first', ascending=True)
+    df['date'] = pd.to_datetime(df['date'])
+    date_update = df['date'].max()
+    date_max = date_update.strftime('%d %b')
+
+    df['date'] = df['date'].dt.strftime('%d %b')
+    df.set_index('date', inplace=True)
+
+    prop = df.loc[date_max].sort_values(
+        by='confirmed', ascending=False).head(30)
+
+    #df.index = df.index.strftime('%d %b')
     cols = ['confirmed', 'recovered', 'deaths',
-            'actives', 'days_since_first_infection']
-    out = dict(timeserie=dict(), fraction=dict())
+            'active', 'days_since_first_infection']
+    out = dict(timeserie=dict(), fraction=dict(),
+               last_update=date_update.strftime('%Y-%m-%dT%X'))
     countries = list(prop['countries'].unique())
+
     countries.remove('Brasil')
     countries.insert(0, 'Brasil')
     for country in countries:
@@ -201,32 +225,54 @@ def persist_dataset(df):
             cols].reset_index().to_dict(orient='list')
 
     # build proportion of cases per country
-
-    prop['actives_frac'] = (100 * prop['actives'] / prop['confirmed']).round(2)
-    prop['recovered_frac'] = (100 * prop['recovered'] / prop['confirmed']).round(2)
+    prop['active_frac'] = (100 * prop['active'] / prop['confirmed']).round(2)
+    prop['recovered_frac'] = (
+        100 * prop['recovered'] / prop['confirmed']).round(2)
     prop['deaths_frac'] = (100 * prop['deaths'] / prop['confirmed']).round(2)
-    prop = prop[['countries', 'actives_frac', 'recovered_frac', 'deaths_frac']]
+    prop = prop[['countries', 'active_frac', 'recovered_frac', 'deaths_frac']]
 
-    out['fraction'] = prop.to_dict(orient='list') 
-    
+    out['fraction'] = prop.to_dict(orient='list')
+    return out
+
+
+def load_daily_data(url):
+    df = pd.read_csv(url)
+    df.columns = [column.lower() for column in df.columns]
+    df.rename(columns={'country_region': 'countries',
+                       'last_update': 'date'}, inplace=True)
+    df.drop(columns=['lat', 'long_', 'active'], inplace=True)
+    #df['countries'] = df['countries'].replace(countries_to_pt)
+    return df
+
+
+def persist_dataset(data):
     with open('../data/data.json', 'w', encoding='utf8') as outfile:
-        json.dump(out, outfile, ensure_ascii=False)
+        json.dump(data, outfile, ensure_ascii=False)
+
+
+def send_file_to_server():
+    os.system("rsync -rvzP ../data/data.json mpi-contact:~/public_html/covid19/")
+
+
+def run():
+    df = load_files(url=url, filenames=filenames)
+    df_daily = load_daily_data(url=url_daily)
+
+    df = pd.concat([df, df_daily]).query('confirmed > 0')
+    df['active'] = df['confirmed'] - df['recovered'] - df['deaths']
+
+    # plot_confirmed_cases(data)
+
+    data_json = process_dataframe(df=df)
+    persist_dataset(data=data_json)
+    send_file_to_server()
 
 
 if __name__ == "__main__":
-    url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/'
-    filenames = {'confirmed': 'time_series_19-covid-Confirmed.csv',
-                 'deaths': 'time_series_19-covid-Deaths.csv',
-                 'recovered': 'time_series_19-covid-Recovered.csv'}
-
-    df = load_files(url=url, filenames=filenames)
-    countries = ['Brazil', 'Italy', 'Germany',
-                 'France', 'Spain', 'US', 'Portugal']
-    #data = df.query("country in @countries").query('confirmed > 0')
-    data = df.query('confirmed > 0')
-    data['days_since_first_infection'] = data.groupby(
-        "country").confirmed.rank(method='first', ascending=True)
-    data['countries'] = data['country'].replace(countries_to_pt)
-    # plot_confirmed_cases(data)
-
-    persist_dataset(df=data)
+    while True:
+        print('>>>', datetime.today())
+        try:
+            run()
+        except:
+            print(traceback.print_exc())
+        time.sleep(15*60)
