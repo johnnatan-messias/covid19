@@ -265,7 +265,7 @@ def run():
 
     data_json = process_dataframe(df=df)
     persist_dataset(data=data_json)
-    send_file_to_server()
+    #send_file_to_server()
 
 
 if __name__ == "__main__":
