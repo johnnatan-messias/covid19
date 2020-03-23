@@ -182,7 +182,7 @@
             return json;
         })();
 
-        var date = Date.parse(data.last_update);
+        var date = Date.parse(data.last_update + ".000Z");
         date = new Date(date).toLocaleString()
         document.getElementById("update-datetime").textContent = date
 
