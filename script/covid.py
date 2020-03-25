@@ -15,6 +15,8 @@ warnings.filterwarnings("ignore")
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 pd.set_option('precision', 8)
 
+current_date = datetime.now().astimezone(
+    pytz.timezone('America/Sao_Paulo'))
 
 url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/'
 url_daily = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/data/cases_country.csv"
@@ -29,9 +31,10 @@ countries_to_pt = {'Brazil': 'Brasil', 'France': 'França', 'Germany': 'Alemanha
                    'Netherlands': 'Holanda', 'Iran': 'Irã', 'Korea, South': 'Coréia do Sul',
                    'United Kingdom': 'Reino Unido', 'Belgium': 'Bélgica', 'Austria': 'Áustria',
                    'Norway': 'Noruega', 'Sweden': 'Suécia', 'Denmark': 'Dinamarca', 'Canada': 'Canadá',
-                   'Malaysia': 'Malásia', 'Australia': 'Austrália', 'Japan': 'Japão', 'Ireland': 'Irland',
+                   'Malaysia': 'Malásia', 'Australia': 'Austrália', 'Japan': 'Japão', 'Ireland': 'Irlanda',
                    'Turkey': 'Turquia', 'Luxembourg': 'Luxemburgo', 'Pakistan': 'Paquistão', 'Czechia': 'Rep. Tcheca',
-                   'Cruise Ship': 'Cruzeiro D. Princess', 'Ecuador': 'Equador', 'Poland': 'Polônia'}
+                   'Cruise Ship': 'Cruzeiro D. Princess', 'Ecuador': 'Equador', 'Poland': 'Polônia',
+                   'Thailand': 'Tailândia'}
 
 
 def get_data(df_confirmed, df_recovered, df_deaths):
@@ -70,11 +73,10 @@ def get_data(df_confirmed, df_recovered, df_deaths):
 
 
 def update_historical_data(filename='../data/dataset_timeseries.csv'):
-    current_date = str(datetime.now().astimezone(
-        pytz.timezone('America/Sao_Paulo')).date())
+    global current_date
     df = load_historical_data()
     df_daily = load_daily_report()
-    df = df[df['date'] != current_date]
+    df = df[df['date'] != str(current_date.date())]
     df = pd.concat([df, df_daily]).sort_values(by=['country', 'date'])
     df.to_csv(filename, index=False)
     return df
@@ -86,13 +88,12 @@ def load_historical_data(filename='../data/dataset_timeseries.csv'):
 
 
 def load_daily_report():
-    current_date = str(datetime.now().astimezone(
-        pytz.timezone('America/Sao_Paulo')).date())
+    global current_date
     df = pd.read_csv(url_roylab)
     df.rename(columns={'Nation': 'country', 'Confirmed Case': 'confirmed',
                        'Recover': 'recovered', 'Death': 'deaths'}, inplace=True)
     df['country'] = df['country'].apply(lambda c: c.title())
-    df['date'] = current_date
+    df['date'] = str(current_date.date())
     df = df[['date', 'country', 'confirmed', 'recovered', 'deaths']]
     to_replace = {'Bosnia-Herzegovina': 'Bosnia And Herzegovina', 'China, Mainland': 'China', 'Congo': 'Congo (Brazzaville)',
                   'Czech Republic': 'Czechia',
@@ -121,6 +122,7 @@ def load_files(url, filenames):
 
 
 def process_dataframe(df):
+    global current_date
     df['country'] = df['country'].replace(countries_to_pt)
     df['days_since_first_infection'] = df.groupby(
         "country").confirmed.rank(method='first', ascending=True)
@@ -138,7 +140,7 @@ def process_dataframe(df):
     cols = ['confirmed', 'recovered', 'deaths',
             'active', 'days_since_first_infection']
     out = dict(timeserie=dict(), fraction=dict(),
-               last_update=date_update.strftime('%Y-%m-%dT%X'), stats=dict(),
+               last_update=current_date.strftime('%Y-%m-%dT%X'), stats=dict(),
                total=dict())
     countries = list(prop['country'].unique())
 
@@ -208,4 +210,4 @@ if __name__ == "__main__":
             run()
         except:
             print(traceback.print_exc())
-        time.sleep(5*60)
+        time.sleep(4*60)

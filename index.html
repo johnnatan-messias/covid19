@@ -182,6 +182,8 @@
             return json;
         })();
 
+        console.log(data)
+
         var date = Date.parse(data.last_update + ".000Z");
         date = new Date(date).toLocaleString()
         document.getElementById("update-datetime").textContent = date
@@ -215,63 +217,63 @@
                     backgroundColor: Samples.utils.transparentize(window.chartColors.red),
                     borderColor: window.chartColors.red,
                     fill: false,
-                    data: data.timeserie['Brasil'].confirmed,
+                    data: data.timeserie['Brasil'].confirmed.filter(v => v >= 100),
                 }, {
                     label: 'Alemanha',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.blue),
                     borderColor: window.chartColors.blue,
                     fill: false,
-                    data: data.timeserie['Alemanha'].confirmed,
+                    data: data.timeserie['Alemanha'].confirmed.filter(v => v >= 100),
                 }, {
                     label: 'EUA',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.steel_blue),
                     borderColor: window.chartColors.steel_blue,
                     fill: false,
-                    data: data.timeserie['EUA'].confirmed,
+                    data: data.timeserie['EUA'].confirmed.filter(v => v >= 100),
                 }, {
                     label: 'França',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.green),
                     borderColor: window.chartColors.green,
                     fill: false,
-                    data: data.timeserie['França'].confirmed,
+                    data: data.timeserie['França'].confirmed.filter(v => v >= 100),
                 }, {
                     label: 'Portugal',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.yellow),
                     borderColor: window.chartColors.yellow,
                     fill: false,
-                    data: data.timeserie['Portugal'].confirmed,
+                    data: data.timeserie['Portugal'].confirmed.filter(v => v >= 100),
                 }, {
                     label: 'Itália',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.purple),
                     borderColor: window.chartColors.purple,
                     fill: false,
-                    data: data.timeserie['Itália'].confirmed,
+                    data: data.timeserie['Itália'].confirmed.filter(v => v >= 100),
                 }, {
                     label: 'Espanha',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.orange),
                     borderColor: window.chartColors.orange,
                     fill: false,
-                    data: data.timeserie['Espanha'].confirmed,
+                    data: data.timeserie['Espanha'].confirmed.filter(v => v >= 100),
                 }, {
                     label: 'China',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.chocolate),
                     borderColor: window.chartColors.chocolate,
                     fill: false,
-                    data: data.timeserie['China'].confirmed,
+                    data: data.timeserie['China'].confirmed.filter(v => v >= 100),
                 }]
             },
             options: {
                 responsive: true,
                 title: {
                     display: true,
-                    text: 'Distribuição do número de casos a partir do primeiro caso reportado'
+                    text: 'Distribuição do número de casos a partir dos primeiros 100 casos reportados'
                 },
                 scales: {
                     xAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Número de dias desde o primeiro caso reportado',
+                            labelString: 'Número de dias desde os primeiros 100 casos reportados',
                             fontSize: 18,
                         },
                     }],
@@ -481,9 +483,12 @@
 <!-- Footer -->
 <footer>
     <div class="row text-center inline">
-        <div class="w-100"></div>
         <div class="col-sm">
             <a href="http://johnnatan.me">http://johnnatan.me</a>
+        </div>
+        <div class="w-100"></div>
+        <div class="col-sm">
+            Fonte: Roy Lab
         </div>
     </div>
 
