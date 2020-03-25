@@ -74,6 +74,8 @@ def get_data(df_confirmed, df_recovered, df_deaths):
 
 def update_historical_data(filename='../data/dataset_timeseries.csv'):
     global current_date
+    current_date = datetime.now().astimezone(
+    pytz.timezone('America/Sao_Paulo'))
     df = load_historical_data()
     df_daily = load_daily_report()
     df = df[df['date'] != str(current_date.date())]
@@ -210,4 +212,4 @@ if __name__ == "__main__":
             run()
         except:
             print(traceback.print_exc())
-        time.sleep(4*60)
+        time.sleep(10*60)
