@@ -360,7 +360,7 @@
         }
 
         var barChartData = {
-            labels: data.fraction['countries'],
+            labels: data.fraction['country'],
             datasets: [{
                 label: 'Ativos',
                 backgroundColor: window.chartColors.blue,
@@ -439,7 +439,7 @@
             row.classList.add('row');
             var c = 1;
 
-            countries = data.fraction['countries'].slice(0)
+            countries = data.fraction['country'].slice(0)
             countries.splice(countries.indexOf('Brasil'), 1)
             countries.unshift('Brasil')
             countries.forEach(function (country) {
