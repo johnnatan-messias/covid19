@@ -74,11 +74,11 @@ def get_data(df_confirmed, df_recovered, df_deaths):
 
 def update_historical_data(filename='../data/dataset_timeseries.csv'):
     global current_date
-    current_date = datetime.now().astimezone(
-    pytz.timezone('America/Sao_Paulo'))
+    current_date = datetime.now().astimezone(pytz.timezone('America/Sao_Paulo'))
     df = load_historical_data()
-    df_daily = load_daily_report()
-    df = df[df['date'] != str(current_date.date())]
+    df_daily = load_daily_data()
+    # df_daily = load_daily_report()
+    df = df[df['date'] < str(current_date.date())]
     df = pd.concat([df, df_daily]).sort_values(by=['country', 'date'])
     df.to_csv(filename, index=False)
     return df
@@ -131,6 +131,7 @@ def process_dataframe(df):
     df['date'] = pd.to_datetime(df['date'])
     date_update = df['date'].max()
     date_max = date_update.strftime('%d %b')
+    print(date_max)
 
     df['date'] = df['date'].dt.strftime('%d %b')
     df.set_index('date', inplace=True)
@@ -142,7 +143,7 @@ def process_dataframe(df):
     cols = ['confirmed', 'recovered', 'deaths',
             'active', 'days_since_first_infection']
     out = dict(timeserie=dict(), fraction=dict(),
-               last_update=current_date.strftime('%Y-%m-%dT%X'), stats=dict(),
+               last_update=datetime.utcnow().strftime('%Y-%m-%dT%X'), stats=dict(),
                total=dict())
     countries = list(prop['country'].unique())
 
@@ -172,14 +173,23 @@ def process_dataframe(df):
     return out
 
 
-def load_daily_data(url):
-    df = pd.read_csv(url)
+def load_daily_data():
+    global current_date
+    df = pd.read_csv(url_daily)
     df.columns = [column.lower() for column in df.columns]
-    df.rename(columns={'country_region': 'countries',
+    df.rename(columns={'country_region': 'country',
                        'last_update': 'date'}, inplace=True)
-    df.drop(columns=['lat', 'long_', 'active'], inplace=True)
-    #df['countries'] = df['countries'].replace(countries_to_pt)
+    df.drop(columns=['lat', 'long_', 'active', 'date'], inplace=True)
+    df['date'] = str(current_date.date())
+    df.country = df.country.replace({'US': 'United States'})
+
+    df['country'] = df['country'].apply(lambda c: c.title())
+
+    df = df[['date', 'country', 'confirmed', 'recovered', 'deaths']]
+
+    df.to_csv(f"../data/time-series/dataset_{str(current_date.date())}.csv")
     return df
+
 
 
 def persist_dataset(data):
