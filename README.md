@@ -22,4 +22,4 @@ In case of any issue, please feel free to contact me at johnme@mpi-sws.org
 ## License
 ----------
 
-TBA
+Please, if you find it useful, refer to this repository ;)
