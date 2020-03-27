@@ -112,33 +112,47 @@
             <div class="col-12">
                 <h6>Atualizado em <span id="update-datetime"></span></h6>
             </div>
-            <div class="col-3">
+            <div class="col-2">
                 <h4>Mundo</h4>
-                <h3><span id="confirmed-world"></span></h3>
+                <h4><span id="confirmed-world"></span></h4>
                 <h6>Ativos: <span id="active-world"></span></h6>
                 <h6>Recuperados: <span id="recovered-world"></span></h6>
                 <h6>Mortes: <span id="deaths-world"></span></h6>
             </div>
-            <div class="col-3">
+            <div class="col-2">
                 <h4>Brasil</h4>
-                <h3><span id="confirmed-brazil"></span></h3>
+                <h4><span id="confirmed-brazil"></span></h4>
                 <h6>Ativos: <span id="active-brazil"></span></h6>
                 <h6>Recuperados: <span id="recovered-brazil"></span></h6>
                 <h6>Mortes: <span id="deaths-brazil"></span></h6>
             </div>
-            <div class="col-3">
-                <h4>Itália</h4>
-                <h3><span id="confirmed-italy"></span></h3>
-                <h6>Ativos: <span id="active-italy"></span></h6>
-                <h6>Recuperados: <span id="recovered-italy"></span></h6>
-                <h6>Mortes: <span id="deaths-italy"></span></h6>
-            </div>
-            <div class="col-3">
+            <div class="col-2">
                 <h4>Alemanha</h4>
-                <h3><span id="confirmed-germany"></span></h3>
+                <h4><span id="confirmed-germany"></span></h4>
                 <h6>Ativos: <span id="active-germany"></span></h6>
                 <h6>Recuperados: <span id="recovered-germany"></span></h6>
                 <h6>Mortes: <span id="deaths-germany"></span></h6>
+            </div>
+            <div class="col-2">
+                <h4>China</h4>
+                <h4><span id="confirmed-china"></span></h4>
+                <h6>Ativos: <span id="active-china"></span></h6>
+                <h6>Recuperados: <span id="recovered-china"></span></h6>
+                <h6>Mortes: <span id="deaths-china"></span></h6>
+            </div>
+            <div class="col-2">
+                <h4>EUA</h4>
+                <h4><span id="confirmed-united-states"></span></h4>
+                <h6>Ativos: <span id="active-united-states"></span></h6>
+                <h6>Recuperados: <span id="recovered-united-states"></span></h6>
+                <h6>Mortes: <span id="deaths-united-states"></span></h6>
+            </div>
+            <div class="col-2">
+                <h4>Itália</h4>
+                <h4><span id="confirmed-italy"></span></h4>
+                <h6>Ativos: <span id="active-italy"></span></h6>
+                <h6>Recuperados: <span id="recovered-italy"></span></h6>
+                <h6>Mortes: <span id="deaths-italy"></span></h6>
             </div>
         </div>
 
@@ -207,6 +221,16 @@
         document.getElementById("active-germany").textContent = data.stats['Alemanha']['active'].toLocaleString()
         document.getElementById("recovered-germany").textContent = data.stats['Alemanha']['recovered'].toLocaleString()
         document.getElementById("deaths-germany").textContent = data.stats['Alemanha']['deaths'].toLocaleString()
+
+        document.getElementById("confirmed-united-states").textContent = data.stats['EUA']['confirmed'].toLocaleString()
+        document.getElementById("active-united-states").textContent = data.stats['EUA']['active'].toLocaleString()
+        document.getElementById("recovered-united-states").textContent = data.stats['EUA']['recovered'].toLocaleString()
+        document.getElementById("deaths-united-states").textContent = data.stats['EUA']['deaths'].toLocaleString()
+
+        document.getElementById("confirmed-china").textContent = data.stats['China']['confirmed'].toLocaleString()
+        document.getElementById("active-china").textContent = data.stats['China']['active'].toLocaleString()
+        document.getElementById("recovered-china").textContent = data.stats['China']['recovered'].toLocaleString()
+        document.getElementById("deaths-china").textContent = data.stats['China']['deaths'].toLocaleString()
 
         var config = {
             type: 'line',
