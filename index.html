@@ -127,20 +127,6 @@
                 <h6>Mortes: <span id="deaths-brazil"></span></h6>
             </div>
             <div class="col-2">
-                <h4>Alemanha</h4>
-                <h4><span id="confirmed-germany"></span></h4>
-                <h6>Ativos: <span id="active-germany"></span></h6>
-                <h6>Recuperados: <span id="recovered-germany"></span></h6>
-                <h6>Mortes: <span id="deaths-germany"></span></h6>
-            </div>
-            <div class="col-2">
-                <h4>China</h4>
-                <h4><span id="confirmed-china"></span></h4>
-                <h6>Ativos: <span id="active-china"></span></h6>
-                <h6>Recuperados: <span id="recovered-china"></span></h6>
-                <h6>Mortes: <span id="deaths-china"></span></h6>
-            </div>
-            <div class="col-2">
                 <h4>EUA</h4>
                 <h4><span id="confirmed-united-states"></span></h4>
                 <h6>Ativos: <span id="active-united-states"></span></h6>
@@ -154,8 +140,24 @@
                 <h6>Recuperados: <span id="recovered-italy"></span></h6>
                 <h6>Mortes: <span id="deaths-italy"></span></h6>
             </div>
+            <div class="col-2">
+                <h4>Espanha</h4>
+                <h4><span id="confirmed-spain"></span></h4>
+                <h6>Ativos: <span id="active-spain"></span></h6>
+                <h6>Recuperados: <span id="recovered-spain"></span></h6>
+                <h6>Mortes: <span id="deaths-spain"></span></h6>
+            </div>
+            <div class="col-2">
+                <h4>Alemanha</h4>
+                <h4><span id="confirmed-germany"></span></h4>
+                <h6>Ativos: <span id="active-germany"></span></h6>
+                <h6>Recuperados: <span id="recovered-germany"></span></h6>
+                <h6>Mortes: <span id="deaths-germany"></span></h6>
+            </div>
+
+
         </div>
-        
+
 
         <div class='row'>
             <div class='col chart-container-main'>
@@ -228,10 +230,10 @@
         document.getElementById("recovered-united-states").textContent = data.stats['EUA']['recovered'].toLocaleString()
         document.getElementById("deaths-united-states").textContent = data.stats['EUA']['deaths'].toLocaleString()
 
-        document.getElementById("confirmed-china").textContent = data.stats['China']['confirmed'].toLocaleString()
-        document.getElementById("active-china").textContent = data.stats['China']['active'].toLocaleString()
-        document.getElementById("recovered-china").textContent = data.stats['China']['recovered'].toLocaleString()
-        document.getElementById("deaths-china").textContent = data.stats['China']['deaths'].toLocaleString()
+        document.getElementById("confirmed-spain").textContent = data.stats['Espanha']['confirmed'].toLocaleString()
+        document.getElementById("active-spain").textContent = data.stats['Espanha']['active'].toLocaleString()
+        document.getElementById("recovered-spain").textContent = data.stats['Espanha']['recovered'].toLocaleString()
+        document.getElementById("deaths-spain").textContent = data.stats['Espanha']['deaths'].toLocaleString()
 
         var config = {
             type: 'line',
