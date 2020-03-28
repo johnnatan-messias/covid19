@@ -34,7 +34,16 @@ countries_to_pt = {'Brazil': 'Brasil', 'France': 'França', 'Germany': 'Alemanha
                    'Malaysia': 'Malásia', 'Australia': 'Austrália', 'Japan': 'Japão', 'Ireland': 'Irlanda',
                    'Turkey': 'Turquia', 'Luxembourg': 'Luxemburgo', 'Pakistan': 'Paquistão', 'Czechia': 'Rep. Tcheca',
                    'Cruise Ship': 'Cruzeiro D. Princess', 'Ecuador': 'Equador', 'Poland': 'Polônia',
-                   'Thailand': 'Tailândia'}
+                   'Thailand': 'Tailândia', 'Romania': 'Romênia', 'Russia': 'Rússia', 'South Africa': 'África do Sul',
+                   'Finland': 'Finlândia', 'Indonesia': 'Indonésia', 'Saudi Arabia': 'Arábia Saudita', 
+                   'Philippines': 'Filipinas', 'Greece': 'Grécia', 'India': 'Índia', 'Iceland': 'Islândia',
+                   'Panama': 'Panamá', 'Singapore': 'Singapura', 'Mexico': 'México', 'Slovenia': 'Eslovênia',
+                   'Estonia': 'Estônia', 'Croatia': 'Croácia', 'Peru': 'Perú', 'Dominican Republic': 'Rep. Dominicana', 
+                   'Qatar': 'Catar', 'Colombia': 'Colômbia', 'Egypt': 'Egito', 'Serbia': 'Sérvia', 'Iraq': 'Iraque',
+                   'New Zealand': 'Nova Zelândia', 'Lebanon': 'Líbano', 'United Arab Emirates': 'Emirados Árabe', 
+                   'Lithuania': 'Lituânia', 'Armenia': 'Armênia', 'Morocco': 'Marrocos', 'Hungary': 'Hungria',
+                   'Bulgaria': 'Bulgária', 'Ukraine': 'Ucrânia', 'Uruguay': 'Uruguai', 'Slovakia': 'Slováquia', 
+                   'Bosnia And Herzegovina': 'Bósnia'}
 
 
 def get_data(df_confirmed, df_recovered, df_deaths):
@@ -157,7 +166,7 @@ def process_dataframe(df):
     prop['active_frac'] = (100 * prop['active'] / prop['confirmed']).round(2)
     prop['recovered_frac'] = (
         100 * prop['recovered'] / prop['confirmed']).round(2)
-    prop['deaths_frac'] = (100 * prop['deaths'] / prop['confirmed']).round(2)
+    prop['deaths_frac'] = (100 - prop['active_frac'] - prop['recovered_frac']).round(2)
     prop = prop[['country', 'active_frac', 'recovered_frac', 'deaths_frac']]
 
     total_df = df.loc[date_max].sort_values(
@@ -191,7 +200,6 @@ def load_daily_data():
     return df
 
 
-
 def persist_dataset(data):
     with open('../data/data.json', 'w', encoding='utf8') as outfile:
         json.dump(data, outfile, ensure_ascii=False)
@@ -222,4 +230,4 @@ if __name__ == "__main__":
             run()
         except:
             print(traceback.print_exc())
-        time.sleep(10*60)
+        time.sleep(15*60)
