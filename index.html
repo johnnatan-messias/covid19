@@ -156,24 +156,55 @@
                 <h6>Recuperados: <span id="recovered-germany"></span></h6>
                 <h6>Óbitos: <span id="deaths-germany"></span></h6>
             </div>
-
-
         </div>
 
 
-        <div class='row'>
-            <div class='col chart-container-main'>
-                <canvas id="canvas-days-since-fisrt-infection"></canvas>
-            </div>
-        </div>
-
-        <div class="row text-center inline">
+        <div class="row text-center">
             <div class="col-12">
                 <h2>Proporção de casos por país</h2>
             </div>
             <div class="col-12" id="bar-plot">
             </div>
         </div>
+
+        <div class="row text-center">
+            <div class="col-12">
+                <h2>Número de casos confirmados reportados</h2>
+            </div>
+            <div class="col-1"></div>
+            <div class="col-10">
+                <canvas id="canvas-days-since-fisrt-infection"></canvas>
+            </div>
+            <div class="col-1"></div>
+        </div>
+
+        </br>
+
+        <div class="row text-center">
+            <div class="col-12">
+                <h2>Número de óbitos reportados</h2>
+            </div>
+            <div class="col-1"></div>
+            <div class="col-10">
+                <canvas id="canvas-days-since-fisrt-death"></canvas>
+            </div>
+            <div class="col-1"></div>
+        </div>
+
+        </br>
+
+
+        <div class="row text-center">
+            <div class="col-12">
+                <h2>Número de casos confirmados por óbitos em cada país</h2>
+            </div>
+            <div class="col-1"></div>
+            <div class="col-10">
+                <canvas id="canvas-confirmed-per-deaths"></canvas>
+            </div>
+            <div class="col-1"></div>
+        </div>
+
 
         <div class="row text-center inline">
             <div class="col-12">
@@ -183,6 +214,8 @@
                 <h6>O eixo y possui escala diferente em cada gráfico</h6>
             </div>
         </div>
+
+
     </div>
 
     <script>
@@ -200,8 +233,6 @@
             });
             return json;
         })();
-
-        console.log(data)
 
         var date = Date.parse(data.last_update + ".000Z");
         date = new Date(date).toLocaleString()
@@ -295,14 +326,14 @@
                 responsive: true,
                 title: {
                     display: true,
-                    text: 'Distribuição do número de casos confirmados a partir dos primeiros 100 casos confirmados reportados'
+                    text: 'Distribuição do número de casos confirmados a partir dos primeiros 100 (cem) casos confirmados reportados'
                 },
                 scales: {
                     xAxes: [{
                         display: true,
                         scaleLabel: {
                             display: true,
-                            labelString: 'Número de dias desde os primeiros 100 casos confirmados reportados',
+                            labelString: 'Número de dias desde os primeiros 100 (cem) casos confirmados reportados',
                             fontSize: 18,
                         },
                     }],
@@ -322,6 +353,96 @@
                             },
                             maxTicksLimit: 15,
                             //sampleSize: 15,
+                        },
+                    }]
+                }
+            }
+        };
+
+        var config_deaths = {
+            type: 'line',
+            data: {
+                labels: data.timeserie['EUA'].days_since_first_infection,
+                datasets: [{
+                    label: 'Brasil',
+                    backgroundColor: Samples.utils.transparentize(window.chartColors.red),
+                    borderColor: window.chartColors.red,
+                    fill: false,
+                    data: data.timeserie['Brasil'].deaths.filter(v => v >= 10),
+                }, {
+                    label: 'Alemanha',
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.blue),
+                    borderColor: window.chartColors.blue,
+                    fill: false,
+                    data: data.timeserie['Alemanha'].deaths.filter(v => v >= 10),
+                }, {
+                    label: 'EUA',
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.steel_blue),
+                    borderColor: window.chartColors.steel_blue,
+                    fill: false,
+                    data: data.timeserie['EUA'].deaths.filter(v => v >= 10),
+                }, {
+                    label: 'França',
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.green),
+                    borderColor: window.chartColors.green,
+                    fill: false,
+                    data: data.timeserie['França'].deaths.filter(v => v >= 10),
+                }, {
+                    label: 'Portugal',
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.yellow),
+                    borderColor: window.chartColors.yellow,
+                    fill: false,
+                    data: data.timeserie['Portugal'].deaths.filter(v => v >= 10),
+                }, {
+                    label: 'Itália',
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.purple),
+                    borderColor: window.chartColors.purple,
+                    fill: false,
+                    data: data.timeserie['Itália'].deaths.filter(v => v >= 10),
+                }, {
+                    label: 'Espanha',
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.orange),
+                    borderColor: window.chartColors.orange,
+                    fill: false,
+                    data: data.timeserie['Espanha'].deaths.filter(v => v >= 10),
+                }, {
+                    label: 'China',
+                    ackgroundColor: Samples.utils.transparentize(window.chartColors.chocolate),
+                    borderColor: window.chartColors.chocolate,
+                    fill: false,
+                    data: data.timeserie['China'].deaths.filter(v => v >= 10),
+                }]
+            },
+            options: {
+                responsive: true,
+                title: {
+                    display: true,
+                    text: 'Distribuição do número de óbitos a partir dos primeiros 10 (dez) casos de óbitos reportados'
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número de dias desde os primeiros 10 (dez) óbitos reportados',
+                            fontSize: 18,
+                        },
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número oficial de óbtios (log)',
+                            fontSize: 18,
+                        },
+
+                        type: 'logarithmic',
+
+                        ticks: {
+                            userCallback: function (tick) {
+                                return tick.toLocaleString()
+                            },
+                            maxTicksLimit: 15,
                         },
                     }]
                 }
@@ -381,8 +502,10 @@
                                 fontSize: 14,
                             },
                             ticks: {
+                                userCallback: function (tick) {
+                                    return tick.toLocaleString()
+                                },
                                 min: 0,
-                                //stepSize: 10x
                             }
                         }],
                     }
@@ -448,10 +571,114 @@
             }
         }
 
+        var color = Chart.helpers.color;
+        function get_confirmed_per_deaths_data(country) {
+            var axis = [];
+            n = data.timeserie[country].lenght
+            axis.push({
+                x: data.stats[country].confirmed,
+                y: data.stats[country].deaths,
+            });
+            return axis;
+        }
+        var scatter_labels = []
+        var datasets = []
+        var axis = []
+        for (var country in data.stats) {
+            if (data.stats[country].deaths < 10) {
+                continue
+            }
+            scatter_labels.push(country)
+            axis.push({
+                x: data.stats[country].confirmed,
+                y: data.stats[country].deaths,
+            })
+
+        }
+        datasets.push({
+            borderColor: window.chartColors.red,
+            backgroundColor: color(window.chartColors.red).alpha(0.2).rgbString(),
+            pointHoverRadius: 10,
+            pointRadius: 5,
+            data: axis
+        })
+
+        var scatterChartData = {
+            datasets: datasets,
+            labels: scatter_labels
+        };
+
+        conf_scatter = {
+            type: 'scatter',
+            data: scatterChartData,
+            options: {
+                legend: {
+                    display: false,
+                }, title: {
+                    display: false,
+                }, scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número de casos confirmados reportados',
+                            fontSize: 18,
+                        }, ticks: {
+                            userCallback: function (tick) {
+                                return tick.toLocaleString()
+                            },
+                            maxTicksLimit: 15,
+                        }, type: 'logarithmic',
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Número de casos de óbitos reportados',
+                            fontSize: 18,
+                        },
+
+                        type: 'logarithmic',
+
+                        ticks: {
+                            userCallback: function (tick) {
+                                return tick.toLocaleString()
+                            },
+                            maxTicksLimit: 15,
+                        },
+                    }]
+                }, tooltips: {
+                    mode: 'index',
+                    callbacks: {
+                        label: function (tooltipItem, data) {
+                            var tooltip = []
+                            tooltip.push('Confirmados: ' + tooltipItem.xLabel.toLocaleString())
+                            tooltip.push('Óbitos: ' + tooltipItem.yLabel.toLocaleString())
+                            return tooltip
+                        }, title: function (tooltipItem, data) {
+                            return data.labels[tooltipItem[0].index];
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+
 
         window.onload = function () {
+
+            var ctx = document.getElementById('canvas-confirmed-per-deaths').getContext('2d');
+            window.myScatter = Chart.Scatter(ctx, conf_scatter)
+
+
+
             var ctx = document.getElementById('canvas-days-since-fisrt-infection').getContext('2d');
             window.myLine = new Chart(ctx, config);
+
+            var ctx = document.getElementById('canvas-days-since-fisrt-death').getContext('2d');
+            window.myLine = new Chart(ctx, config_deaths);
 
             var canvas = document.createElement('canvas');
             var row = document.getElementById('bar-plot');
