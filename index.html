@@ -754,8 +754,9 @@
     <script>
         var table_elem = document.getElementById("table-cases-per-country")
         for (var country in data.timeserie) {
+            new_cases_class = ''
+            new_deaths_class = ''
             n = data.timeserie[country]['active'].length
-
             confirmed = data.timeserie[country]['confirmed'][n - 1]
             new_confirmed_cases = confirmed - data.timeserie[country]['confirmed'][n - 2]
             active = data.timeserie[country]['active'][n - 1]
@@ -763,9 +764,12 @@
             deaths = data.timeserie[country]['deaths'][n - 1]
             new_death_cases = deaths - data.timeserie[country]['deaths'][n - 2]
             first_reported_cases = data.timeserie[country]['date'][0]
-
+            if (new_confirmed_cases > 0)
+                new_cases_class = 'class="p-3 mb-2 bg-warning text-dark"'
+            if (new_confirmed_cases > 0)
+                new_deaths_class = 'class="p-3 mb-2 bg-danger text-white"'
             elem = document.createElement('tr')
-            elem.innerHTML = '<th scope="row">' + country + '</th><td>' + confirmed.toLocaleString() + '</td><td>' + new_confirmed_cases.toLocaleString() + '</td><td>' + deaths.toLocaleString() + '</td><td>' + new_death_cases.toLocaleString() + '</td><td>' + active.toLocaleString() + '</td>' + '</td><td>' + recovered.toLocaleString() + '</td>' + '</td><td>' + first_reported_cases + '</td>'
+            elem.innerHTML = '<th scope="row">' + country + '</th><td>' + confirmed.toLocaleString() + '</td><td ' + new_cases_class + '>+' + new_confirmed_cases.toLocaleString() + '</td><td>' + deaths.toLocaleString() + '</td><td ' + new_deaths_class + '>+' + new_death_cases.toLocaleString() + '</td><td>' + active.toLocaleString() + '</td>' + '</td><td>' + recovered.toLocaleString() + '</td>' + '</td><td>' + first_reported_cases + '</td>'
             table_elem.appendChild(elem)
         }
 
