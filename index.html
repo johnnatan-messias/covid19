@@ -681,11 +681,14 @@
 
 
         window.onload = function () {
-
+            /*
+            if(!window.location.hash) {
+                window.location = window.location + '#loaded';
+                window.location.reload();
+            }
+            */
             var ctx = document.getElementById('canvas-confirmed-per-deaths').getContext('2d');
             window.myScatter = Chart.Scatter(ctx, conf_scatter)
-
-
 
             var ctx = document.getElementById('canvas-days-since-fisrt-infection').getContext('2d');
             window.myLine = new Chart(ctx, config);
@@ -732,12 +735,8 @@
                 c += 1
             });
             container.appendChild(row)
-        };
-
-    </script>
-
-    <script>
-        var table_elem = document.getElementById("table-cases-per-country")
+        
+            var table_elem = document.getElementById("table-cases-per-country")
         for (var country in data.timeserie) {
             new_cases_class = ''
             new_deaths_class = ''
@@ -761,6 +760,9 @@
             elem.innerHTML = '<th scope="row">' + country + '</th><td>' + confirmed.toLocaleString() + '</td><td ' + new_cases_class + '>+' + new_confirmed_cases.toLocaleString() + '</td><td>' + deaths.toLocaleString() + '</td><td ' + new_deaths_class + '>+' + new_death_cases.toLocaleString() + '</td><td>' + active.toLocaleString() + '</td><td>' + recovered.toLocaleString() + '</td><td ' + new_recovered_cases_class + '>+' + new_recovered_cases.toLocaleString() + '</td><td>' + first_reported_cases + '</td>'
             table_elem.appendChild(elem)
         }
+
+        
+        };
 
     </script>
 
