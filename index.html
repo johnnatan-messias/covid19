@@ -766,7 +766,7 @@
             first_reported_cases = data.timeserie[country]['date'][0]
             if (new_confirmed_cases > 0)
                 new_cases_class = 'class="p-3 mb-2 bg-warning text-dark"'
-            if (new_confirmed_cases > 0)
+            if (new_death_cases > 0)
                 new_deaths_class = 'class="p-3 mb-2 bg-danger text-white"'
             elem = document.createElement('tr')
             elem.innerHTML = '<th scope="row">' + country + '</th><td>' + confirmed.toLocaleString() + '</td><td ' + new_cases_class + '>+' + new_confirmed_cases.toLocaleString() + '</td><td>' + deaths.toLocaleString() + '</td><td ' + new_deaths_class + '>+' + new_death_cases.toLocaleString() + '</td><td>' + active.toLocaleString() + '</td>' + '</td><td>' + recovered.toLocaleString() + '</td>' + '</td><td>' + first_reported_cases + '</td>'
