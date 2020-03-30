@@ -106,9 +106,7 @@
 </head>
 
 <body>
-
     <div class="container">
-
         <div class="row text-center inline">
             <div class="col-12">
                 <h1>Número de casos reportados</h1>
@@ -159,8 +157,6 @@
                 <h6>Óbitos: <span id="deaths-germany"></span></h6>
             </div>
         </div>
-
-
         <div class="row text-center">
             <div class="col-12">
                 <h2>Proporção de casos por país</h2>
@@ -168,7 +164,6 @@
             <div class="col-12" id="bar-plot">
             </div>
         </div>
-
         <div class="row text-center">
             <div class="col-12">
                 <h2>Número de casos confirmados reportados</h2>
@@ -179,9 +174,7 @@
             </div>
             <div class="col-1"></div>
         </div>
-
         </br>
-
         <div class="row text-center">
             <div class="col-12">
                 <h2>Número de óbitos reportados</h2>
@@ -192,10 +185,7 @@
             </div>
             <div class="col-1"></div>
         </div>
-
         </br>
-
-
         <div class="row text-center">
             <div class="col-12">
                 <h2>Número de casos confirmados por óbitos em cada país</h2>
@@ -206,8 +196,6 @@
             </div>
             <div class="col-1"></div>
         </div>
-
-
         <div class="row text-center inline">
             <div class="col-12">
                 <h2>Tabela dos números de casos por país</h2>
@@ -224,6 +212,7 @@
                             <th scope="col">Novos casos de óbito</th>
                             <th scope="col">Total de ativos</th>
                             <th scope="col">Total de recuperados</th>
+                            <th scope="col">Novos recuperados</th>
                             <th scope="col">Primeiro caso reportado</th>
                         </tr>
                     </thead>
@@ -233,7 +222,6 @@
                 </table>
             </div>
         </div>
-
         <div class="row text-center inline" id="charts-top-30">
             <div class="col-12">
                 <h2>Número de casos por país</h2>
@@ -243,7 +231,6 @@
             </div>
 
         </div>
-
     </div>
 
     <script>
@@ -756,20 +743,24 @@
         for (var country in data.timeserie) {
             new_cases_class = ''
             new_deaths_class = ''
+            new_recovered_cases_class = ''
             n = data.timeserie[country]['active'].length
             confirmed = data.timeserie[country]['confirmed'][n - 1]
             new_confirmed_cases = confirmed - data.timeserie[country]['confirmed'][n - 2]
             active = data.timeserie[country]['active'][n - 1]
             recovered = data.timeserie[country]['recovered'][n - 1]
+            new_recovered_cases = recovered - data.timeserie[country]['recovered'][n - 2]
             deaths = data.timeserie[country]['deaths'][n - 1]
             new_death_cases = deaths - data.timeserie[country]['deaths'][n - 2]
             first_reported_cases = data.timeserie[country]['date'][0]
             if (new_confirmed_cases > 0)
                 new_cases_class = 'class="p-3 mb-2 bg-warning text-dark"'
+            if (new_recovered_cases > 0)
+                new_recovered_cases_class = 'class="p-3 mb-2 bg-success text-white"'
             if (new_death_cases > 0)
                 new_deaths_class = 'class="p-3 mb-2 bg-danger text-white"'
             elem = document.createElement('tr')
-            elem.innerHTML = '<th scope="row">' + country + '</th><td>' + confirmed.toLocaleString() + '</td><td ' + new_cases_class + '>+' + new_confirmed_cases.toLocaleString() + '</td><td>' + deaths.toLocaleString() + '</td><td ' + new_deaths_class + '>+' + new_death_cases.toLocaleString() + '</td><td>' + active.toLocaleString() + '</td>' + '</td><td>' + recovered.toLocaleString() + '</td>' + '</td><td>' + first_reported_cases + '</td>'
+            elem.innerHTML = '<th scope="row">' + country + '</th><td>' + confirmed.toLocaleString() + '</td><td ' + new_cases_class + '>+' + new_confirmed_cases.toLocaleString() + '</td><td>' + deaths.toLocaleString() + '</td><td ' + new_deaths_class + '>+' + new_death_cases.toLocaleString() + '</td><td>' + active.toLocaleString() + '</td><td>' + recovered.toLocaleString() + '</td><td ' + new_recovered_cases_class + '>+' + new_recovered_cases.toLocaleString() + '</td><td>' + first_reported_cases + '</td>'
             table_elem.appendChild(elem)
         }
 
@@ -784,8 +775,6 @@
 
         gtag('config', 'UA-161526158-1');
     </script>
-
-
 </body>
 
 <!-- Footer -->
