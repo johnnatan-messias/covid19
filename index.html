@@ -12,8 +12,9 @@
     <meta property="og:image:height" content="884">
     <meta name="keywords"
         content="corona, vírus, virus, pandemia, dados, brasil, mundo, johnnatan messias, ciência da computação, monitor, covid-19, covid, transparência, projeto">
-        <script data-ad-client="ca-pub-9807457463500719" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-        <script src="./utils/js/chart.js/Chart.min.js"></script>
+    <script data-ad-client="ca-pub-9807457463500719" async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script src="./utils/js/chart.js/Chart.min.js"></script>
     <script src="./utils/js/chart.js/utils.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
@@ -209,13 +210,39 @@
 
         <div class="row text-center inline">
             <div class="col-12">
+                <h2>Tabela dos números de casos por país</h2>
+            </div>
+            <div class="col-12">
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">País</th>
+                            <th scope="col">Total de casos</th>
+                            <th scope="col">Novos casos</th>
+                            <th scope="col">Total de óbitos</th>
+                            <th scope="col">Novos casos de óbito</th>
+                            <th scope="col">Total de ativos</th>
+                            <th scope="col">Total de recuperados</th>
+                            <th scope="col">Primeiro caso reportado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-cases-per-country">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row text-center inline" id="charts-top-30">
+            <div class="col-12">
                 <h2>Número de casos por país</h2>
             </div>
             <div class="col-12">
                 <h6>O eixo y possui escala diferente em cada gráfico</h6>
             </div>
-        </div>
 
+        </div>
 
     </div>
 
@@ -693,7 +720,7 @@
             var ctx = canvas.getContext('2d');
             window.myBar = new Chart(ctx, conf_bar);
 
-            var container = document.querySelector('.container');
+            var container = document.getElementById('charts-top-30');
             var row = document.createElement('div');
             row.classList.add('row');
             var c = 1;
@@ -721,6 +748,26 @@
             });
             container.appendChild(row)
         };
+
+    </script>
+
+    <script>
+        var table_elem = document.getElementById("table-cases-per-country")
+        for (var country in data.timeserie) {
+            n = data.timeserie[country]['active'].length
+
+            confirmed = data.timeserie[country]['confirmed'][n - 1]
+            new_confirmed_cases = confirmed - data.timeserie[country]['confirmed'][n - 2]
+            active = data.timeserie[country]['active'][n - 1]
+            recovered = data.timeserie[country]['recovered'][n - 1]
+            deaths = data.timeserie[country]['deaths'][n - 1]
+            new_death_cases = deaths - data.timeserie[country]['deaths'][n - 2]
+            first_reported_cases = data.timeserie[country]['date'][0]
+
+            elem = document.createElement('tr')
+            elem.innerHTML = '<th scope="row">' + country + '</th><td>' + confirmed.toLocaleString() + '</td><td>' + new_confirmed_cases.toLocaleString() + '</td><td>' + deaths.toLocaleString() + '</td><td>' + new_death_cases.toLocaleString() + '</td><td>' + active.toLocaleString() + '</td>' + '</td><td>' + recovered.toLocaleString() + '</td>' + '</td><td>' + first_reported_cases + '</td>'
+            table_elem.appendChild(elem)
+        }
 
     </script>
 
