@@ -12,7 +12,7 @@ import pytz
 
 warnings.filterwarnings("ignore")
 
-locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+# locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 pd.set_option('precision', 8)
 
 current_date = datetime.now().astimezone(
@@ -23,7 +23,7 @@ url_daily = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/web-data/
 url_roylab = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQuDj0R6K85sdtI8I-Tc7RCx8CnIxKUQue0TCUdrFOKDw9G3JRtGhl64laDd3apApEvIJTdPFJ9fEUL/pub?gid=0&output=csv&sheet=CR_ROYLAB'
 filenames = {'confirmed': 'time_series_covid19_confirmed_global.csv',
              'deaths': 'time_series_covid19_deaths_global.csv',
-             'recovered': 'time_series_19-covid-Recovered.csv'}
+             'recovered': 'time_series_covid19_recovered_global.csv'}
 
 
 countries_to_pt = {'Brazil': 'Brasil', 'France': 'França', 'Germany': 'Alemanha',
@@ -35,14 +35,14 @@ countries_to_pt = {'Brazil': 'Brasil', 'France': 'França', 'Germany': 'Alemanha
                    'Turkey': 'Turquia', 'Luxembourg': 'Luxemburgo', 'Pakistan': 'Paquistão', 'Czechia': 'Rep. Tcheca',
                    'Cruise Ship': 'Cruzeiro D. Princess', 'Ecuador': 'Equador', 'Poland': 'Polônia',
                    'Thailand': 'Tailândia', 'Romania': 'Romênia', 'Russia': 'Rússia', 'South Africa': 'África do Sul',
-                   'Finland': 'Finlândia', 'Indonesia': 'Indonésia', 'Saudi Arabia': 'Arábia Saudita', 
+                   'Finland': 'Finlândia', 'Indonesia': 'Indonésia', 'Saudi Arabia': 'Arábia Saudita',
                    'Philippines': 'Filipinas', 'Greece': 'Grécia', 'India': 'Índia', 'Iceland': 'Islândia',
                    'Panama': 'Panamá', 'Singapore': 'Singapura', 'Mexico': 'México', 'Slovenia': 'Eslovênia',
-                   'Estonia': 'Estônia', 'Croatia': 'Croácia', 'Peru': 'Perú', 'Dominican Republic': 'Rep. Dominicana', 
+                   'Estonia': 'Estônia', 'Croatia': 'Croácia', 'Peru': 'Perú', 'Dominican Republic': 'Rep. Dominicana',
                    'Qatar': 'Catar', 'Colombia': 'Colômbia', 'Egypt': 'Egito', 'Serbia': 'Sérvia', 'Iraq': 'Iraque',
-                   'New Zealand': 'Nova Zelândia', 'Lebanon': 'Líbano', 'United Arab Emirates': 'Emirados Árabe', 
+                   'New Zealand': 'Nova Zelândia', 'Lebanon': 'Líbano', 'United Arab Emirates': 'Emirados Árabe',
                    'Lithuania': 'Lituânia', 'Armenia': 'Armênia', 'Morocco': 'Marrocos', 'Hungary': 'Hungria',
-                   'Bulgaria': 'Bulgária', 'Ukraine': 'Ucrânia', 'Uruguay': 'Uruguai', 'Slovakia': 'Slováquia', 
+                   'Bulgaria': 'Bulgária', 'Ukraine': 'Ucrânia', 'Uruguay': 'Uruguai', 'Slovakia': 'Slováquia',
                    'Bosnia And Herzegovina': 'Bósnia'}
 
 
@@ -84,11 +84,13 @@ def get_data(df_confirmed, df_recovered, df_deaths):
 def update_historical_data(filename='../data/dataset_timeseries.csv'):
     global current_date
     current_date = datetime.now().astimezone(pytz.timezone('America/Sao_Paulo'))
-    df = load_historical_data()
+    # df = load_historical_data()
+    df = load_files()
     df_daily = load_daily_data()
     # df_daily = load_daily_report()
     df = df[df['date'] < str(current_date.date())]
     df = pd.concat([df, df_daily]).sort_values(by=['country', 'date'])
+    df['date'] = pd.to_datetime(df['date'])
     df.to_csv(filename, index=False)
     return df
 
@@ -117,13 +119,13 @@ def load_daily_report():
     return df
 
 
-def load_files(url, filenames):
+def load_files(url=url, filenames=filenames):
     df_confirmed = pd.read_csv(url+filenames['confirmed'], sep=',')
     df_deaths = pd.read_csv(url+filenames['deaths'], sep=',')
     df_recovered = pd.read_csv(url+filenames['recovered'], sep=',')
     df = get_data(df_confirmed, df_recovered, df_deaths)
 
-    df.rename(columns={'country': 'countries'}, inplace=True)
+    #df.rename(columns={'country': 'countries'}, inplace=True)
     #df['countries'] = df['countries'].replace(countries_to_pt)
     #df.index = df.index.strftime('%d %b')
     df.index.name = 'date'
@@ -134,6 +136,7 @@ def load_files(url, filenames):
 
 def process_dataframe(df):
     global current_date
+    df.fillna(0, inplace=True)
     df['country'] = df['country'].replace(countries_to_pt)
     df['days_since_first_infection'] = df.groupby(
         "country").confirmed.rank(method='first', ascending=True)
@@ -156,8 +159,6 @@ def process_dataframe(df):
                total=dict())
     countries = list(prop['country'].unique())
 
-    countries.remove('Brasil')
-    countries.insert(0, 'Brasil')
     for country in countries:
         out['timeserie'][country] = df.query('country == @country')[
             cols].reset_index().to_dict(orient='list')
@@ -166,7 +167,8 @@ def process_dataframe(df):
     prop['active_frac'] = (100 * prop['active'] / prop['confirmed']).round(2)
     prop['recovered_frac'] = (
         100 * prop['recovered'] / prop['confirmed']).round(2)
-    prop['deaths_frac'] = (100 - prop['active_frac'] - prop['recovered_frac']).round(2)
+    prop['deaths_frac'] = (100 - prop['active_frac'] -
+                           prop['recovered_frac']).round(2)
     prop = prop[['country', 'active_frac', 'recovered_frac', 'deaths_frac']]
 
     total_df = df.loc[date_max].sort_values(
@@ -201,8 +203,8 @@ def load_daily_data():
 
 
 def persist_dataset(data):
-    with open('../data/data.json', 'w', encoding='utf8') as outfile:
-        json.dump(data, outfile, ensure_ascii=False)
+    with open('../data/data.json', 'w') as outfile:
+        json.dump(data, outfile)
 
 
 def push_file():
@@ -214,6 +216,7 @@ def push_file():
 
 
 def run():
+    # df = load_files(url=url, filenames=filenames)
     df = update_historical_data()
     df = df.query('confirmed > 0')
     df['active'] = df['confirmed'] - df['recovered'] - df['deaths']

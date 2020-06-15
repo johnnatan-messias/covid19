@@ -233,21 +233,23 @@
     </div>
 
     <script>
-
-        var data = (function () {
+        
+        data = (function () {
             var json = null;
             $.ajax({
-                'async': false,
-                'global': false,
-                'url': "./data/data.json",
-                'dataType': "json",
-                'success': function (data) {
-                    json = data;
+                async: false,
+                global: false,
+                url: "data/data.json",
+                contentType: "application/json; charset=UTF-8",
+                dataType: "json",
+                success: function (response) {
+                    console.log('response', response)
+                    json = response
                 }
             });
             return json;
         })();
-
+        console.log('data', data);
         var date = Date.parse(data.last_update + ".000Z");
         date = new Date(date).toLocaleString()
         document.getElementById("update-datetime").textContent = date
@@ -310,12 +312,6 @@
                     borderColor: window.chartColors.green,
                     fill: false,
                     data: data.timeserie['França'].confirmed.filter(v => v >= 100),
-                }, {
-                    label: 'Portugal',
-                    ackgroundColor: Samples.utils.transparentize(window.chartColors.yellow),
-                    borderColor: window.chartColors.yellow,
-                    fill: false,
-                    data: data.timeserie['Portugal'].confirmed.filter(v => v >= 100),
                 }, {
                     label: 'Itália',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.purple),
@@ -401,12 +397,6 @@
                     borderColor: window.chartColors.green,
                     fill: false,
                     data: data.timeserie['França'].deaths.filter(v => v >= 10),
-                }, {
-                    label: 'Portugal',
-                    ackgroundColor: Samples.utils.transparentize(window.chartColors.yellow),
-                    borderColor: window.chartColors.yellow,
-                    fill: false,
-                    data: data.timeserie['Portugal'].deaths.filter(v => v >= 10),
                 }, {
                     label: 'Itália',
                     ackgroundColor: Samples.utils.transparentize(window.chartColors.purple),
@@ -682,12 +672,7 @@
 
 
         window.onload = function () {
-            /*
-            if(!window.location.hash) {
-                window.location = window.location + '#loaded';
-                window.location.reload();
-            }
-            */
+
             var ctx = document.getElementById('canvas-confirmed-per-deaths').getContext('2d');
             window.myScatter = Chart.Scatter(ctx, conf_scatter)
 
@@ -714,9 +699,9 @@
             row.classList.add('row');
             var c = 1;
 
-            countries = data.fraction['country'].slice(0)
-            countries.splice(countries.indexOf('Brasil'), 1)
-            countries.unshift('Brasil')
+            countries = data.fraction['country']
+            //countries.splice(countries.indexOf('Brasil'), 1)
+            //countries.unshift('Brasil')
             countries.forEach(function (country) {
                 col = document.createElement('div')
                 col.classList.add('col');
@@ -737,7 +722,7 @@
             });
             container.appendChild(row)
         
-            var table_elem = document.getElementById("table-cases-per-country")
+        var table_elem = document.getElementById("table-cases-per-country")
         for (var country in data.timeserie) {
             new_cases_class = ''
             new_deaths_class = ''
@@ -762,7 +747,6 @@
             table_elem.appendChild(elem)
         }
 
-        
         };
 
     </script>
